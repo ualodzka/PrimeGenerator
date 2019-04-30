@@ -8,7 +8,6 @@ import android.os.IBinder
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
-import io.reactivex.disposables.Disposable
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
@@ -26,8 +25,6 @@ class GeneratorService : Service() {
     lateinit var mNotificationManager: NotificationManager
     lateinit var primeNumbersDao: PrimeNumbersDao
     lateinit var generator: PrimeGenerator
-    private var dbDisposable: Disposable? = null
-    private var disposable: Disposable? = null
     lateinit var notificationBuilder: NotificationCompat.Builder
     var minRange = 2
     val accumulatedPrimes = ArrayList<Int>()
@@ -42,12 +39,6 @@ class GeneratorService : Service() {
         mNotificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         primeNumbersDao = NumbersDatabase.getInstance(this).primeNumbersDao()
         generator = PrimeGenerator()
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        disposable?.dispose()
-        dbDisposable?.dispose()
     }
 
     var isGenerating = false
