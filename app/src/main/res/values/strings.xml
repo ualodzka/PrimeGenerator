@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">Prime Generator</string>
+    <string name="main_limit_number">Число - предел</string>
+    <string name="main_stop">Стоп</string>
+    <string name="main_start">Старт</string>
+    <string name="main_primes_count">Найдено чисел:</string>
+    <string name="main_primes_found">Найденные числа:</string>
+    <string name="main_100000">100000</string>
+    <string name="main_limit">Предел</string>
+    <string name="service_primes_found">Найдено чисел:</string>
+    <string name="service_generating_numbers_until">Вычисляем простые числа до %1$s</string>
+    <string name="service_cancel">Завершить</string>
+</resources>
