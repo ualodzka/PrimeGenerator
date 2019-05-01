@@ -44,9 +44,9 @@ class MainActivity : AppCompatActivity() {
         primeNumbersDao = NumbersDatabase.getInstance(this).primeNumbersDao()
     }
 
-    override fun onSaveInstanceState(outState: Bundle?) {
+    override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        outState?.apply {
+        outState.apply {
             putIntArray(KEY_RESULTS, results?.toIntArray())
             putString(KEY_LIMIT, limitEditText.text.toString())
             putString(KEY_PRIMES_COUNT, resultTextView.text.toString())
@@ -91,9 +91,7 @@ class MainActivity : AppCompatActivity() {
     private val generationProgressReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
             val progress = intent.getBooleanExtra(KEY_PROGRESS, false)
-            if (!progress) {
-                generationProgressBar.invisible()
-            }
+            generationProgressBar.apply { if (progress) visible() else invisible() }
         }
     }
 
@@ -108,7 +106,7 @@ class MainActivity : AppCompatActivity() {
         }
         limitEditText.addTextChangedListener(object : TextWatcher {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                if (s.isNullOrBlank()) startButton.deactivate() else startButton.activate()
+                startButton.apply { if (s.isNullOrBlank()) deactivate() else activate() }
             }
 
             override fun afterTextChanged(s: Editable?) {}

@@ -139,10 +139,11 @@ class GeneratorService : Service() {
                 primes.size.toString(),
                 getString(R.string.service_generating_numbers_until, limit.toString())
             )
-            toggleGenerationProgress(false)
+            toggleProgressBar(false)
             return
         }
 
+            //todo: implement proper async cancellation
          GlobalScope.launch {
             val work1 = async(Dispatchers.Default) { generate(limit) }
             val result = work1.await()
@@ -173,12 +174,13 @@ class GeneratorService : Service() {
                 minRange = it
             }
         }
-        toggleGenerationProgress(false)
+        toggleProgressBar(false)
         return accumulatedPrimes
     }
 
     var biggestCachedValue = 2
     private fun getCachedData(limit: Int) {
+        toggleProgressBar(true)
         GlobalScope.launch {
             val work1 = async { primeNumbersDao.getAll() }
 
@@ -188,18 +190,21 @@ class GeneratorService : Service() {
                 biggestCachedValue = accumulatedPrimes.last()
             }
             startComputation(limit)
+            toggleProgressBar(false)
         }
     }
 
     private fun writeToDb(list: List<Int>) {
+        toggleProgressBar(true)
         val numbers = mutableListOf<Number>()
         list.forEach {
             numbers.add(Number(null, it))
         }
         primeNumbersDao.insert(numbers)
+        toggleProgressBar(false)
     }
 
-    private fun toggleGenerationProgress(isShown: Boolean) {
+    private fun toggleProgressBar(isShown: Boolean) {
         val intent = Intent(MainActivity.ACTION_UPDATE_PROGRESS_BAR)
         intent.putExtra(KEY_PROGRESS, isShown)
         LocalBroadcastManager.getInstance(this)
