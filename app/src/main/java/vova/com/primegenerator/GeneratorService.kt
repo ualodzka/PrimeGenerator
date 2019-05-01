@@ -11,6 +11,7 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
 import vova.com.primegenerator.MainActivity.Companion.KEY_LIMIT
 import vova.com.primegenerator.MainActivity.Companion.KEY_MESSAGE
 import vova.com.primegenerator.MainActivity.Companion.KEY_PROGRESS
@@ -56,7 +57,7 @@ class GeneratorService : Service() {
                     }
                 }
                 ACTION_STOP_FOREGROUND_SERVICE -> {
-                    stopForegroundService()
+                    android.os.Process.killProcess(android.os.Process.myPid())
                 }
             }
         }
@@ -139,10 +140,10 @@ class GeneratorService : Service() {
                 getString(R.string.service_generating_numbers_until, limit.toString())
             )
             toggleGenerationProgress(false)
-            startComputation@ return
+            return
         }
 
-        GlobalScope.async {
+         GlobalScope.launch {
             val work1 = async(Dispatchers.Default) { generate(limit) }
             val result = work1.await()
 
@@ -150,7 +151,7 @@ class GeneratorService : Service() {
             if (result.last() > biggestCachedValue) {
                 val index = result.indexOf(biggestCachedValue)
                 val subList = result.subList(index, result.size - 1)
-                async { writeToDb(subList) }
+                 launch { writeToDb(subList) }
             }
             isGenerating = false
         }
@@ -176,10 +177,9 @@ class GeneratorService : Service() {
         return accumulatedPrimes
     }
 
-
     var biggestCachedValue = 2
     private fun getCachedData(limit: Int) {
-        GlobalScope.async {
+        GlobalScope.launch {
             val work1 = async { primeNumbersDao.getAll() }
 
             val numbers = work1.await()
