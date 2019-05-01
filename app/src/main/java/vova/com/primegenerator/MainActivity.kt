@@ -5,6 +5,8 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
@@ -39,7 +41,6 @@ class MainActivity : AppCompatActivity() {
         }
 
         registerReceivers()
-
         primeNumbersDao = NumbersDatabase.getInstance(this).primeNumbersDao()
     }
 
@@ -105,6 +106,15 @@ class MainActivity : AppCompatActivity() {
             intent.putExtra(KEY_LIMIT, limitEditText.text.toString().toInt())
             startService(intent)
         }
+        limitEditText.addTextChangedListener(object : TextWatcher {
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                if (s.isNullOrBlank()) startButton.deactivate() else startButton.activate()
+            }
+
+            override fun afterTextChanged(s: Editable?) {}
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+        })
+
     }
 
     private fun initRecyclerView() {
